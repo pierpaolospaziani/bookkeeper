@@ -1,10 +1,9 @@
-package org.apache.bookkeeper.bookie;
+package org.apache.bookkeeper.bookie.storage.ldb;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
-import org.apache.bookkeeper.bookie.storage.ldb.ReadCache;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +64,6 @@ public class ReadCacheGetTest {
 
     @Test
     public void getTest() {
-
         if (expectedException == null) {
             Assertions.assertDoesNotThrow(() -> {
                 // Codice di test che non dovrebbe sollevare un'eccezione
@@ -80,6 +78,7 @@ public class ReadCacheGetTest {
             Assertions.assertThrows(expectedException, () -> {
                 // Codice di test che dovrebbe sollevare un'eccezione
                 cache.get(ledgerId, entryId);
+                Assertions.fail();
             });
         }
     }

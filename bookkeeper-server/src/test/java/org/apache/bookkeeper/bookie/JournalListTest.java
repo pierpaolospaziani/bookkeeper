@@ -1,0 +1,137 @@
+package org.apache.bookkeeper.bookie;
+
+import org.apache.bookkeeper.bookie.Journal.JournalIdFilter;
+import org.junit.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+@RunWith(Parameterized.class)
+public class JournalListTest {
+    private static final String validDirectory = "/tmp/journal";
+    private static final String invalidDirectory = "/...";
+    private File journalDir;
+    private JournalIdFilter filter;
+    private final Class<? extends Exception> expectedException;
+    private static final List<Long> expected = new ArrayList<>();
+    private enum ObjType {
+        NULL, VALID, INVALID
+    }
+
+    public JournalListTest(ObjType journalDirType, ObjType filterType, Class<? extends Exception> expectedException) {
+        switch(journalDirType) {
+            case NULL:
+                this.journalDir = null;
+                break;
+            case VALID:
+                this.journalDir = new File(validDirectory);
+                break;
+            case INVALID:
+                this.journalDir = new File(invalidDirectory);
+                break;
+        }
+        switch(filterType) {
+            case NULL:
+                this.filter = null;
+                break;
+            case VALID:
+                // Filtro di esempio per accettare solo ID pari
+                this.filter = id -> id % 2 == 0;
+                break;
+            case INVALID:
+                this.filter = new DummyJournalIdFilter();
+                break;
+        }
+        this.expectedException = expectedException;
+    }
+
+    @BeforeClass
+    public static void setup() throws IOException {
+        File journalDir = new File(validDirectory);
+        journalDir.mkdir();
+        File journalEmptyDir = new File(invalidDirectory);
+        journalEmptyDir.mkdir();
+
+        // Creazione di alcuni file journal di esempio
+        new File(journalDir + "/2.txn").createNewFile();
+        new File(journalDir + "/3.txn").createNewFile();
+        new File(journalDir + "/4.txn").createNewFile();
+        new File(journalDir + "/otherfile.txt").createNewFile();
+    }
+
+    @Before
+    public void putSomeEntries() {
+        if (this.filter == null){
+            expected.add(2L);
+            expected.add(3L);
+            expected.add(4L);
+        } else {
+            expected.add(2L);
+            expected.add(4L);
+        }
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                { ObjType.NULL,      ObjType.NULL,      NullPointerException.class },  // 0
+                { ObjType.NULL,      ObjType.VALID,     NullPointerException.class },  // 1
+                { ObjType.NULL,      ObjType.INVALID,   NullPointerException.class },  // 2
+                { ObjType.VALID,     ObjType.NULL,      null                       },  // 3
+                { ObjType.VALID,     ObjType.VALID,     null                       },  // 4
+                { ObjType.VALID,     ObjType.INVALID,   null                       },  // 5
+                { ObjType.INVALID,   ObjType.NULL,      null                       },  // 6
+                { ObjType.INVALID,   ObjType.VALID,     null                       },  // 7
+                { ObjType.INVALID,   ObjType.INVALID,   null                       }   // 8
+        });
+    }
+
+    @Test
+    public void testListJournalIds(){
+        if (expectedException == null) {
+            Assertions.assertDoesNotThrow(() -> {
+                // Codice di test che non dovrebbe sollevare un'eccezione
+                List<Long> result = Journal.listJournalIds(journalDir, filter);
+                Assert.assertNotNull(result);
+                if (!result.isEmpty()){
+                    Assertions.assertEquals(expected, result);
+                }
+            });
+        } else {
+            Assertions.assertThrows(expectedException, () -> {
+                // Codice di test che dovrebbe sollevare un'eccezione
+                Journal.listJournalIds(journalDir, filter);
+                Assertions.fail();
+            });
+        }
+    }
+
+    @After
+    public void removeEntries() {
+        expected.clear();
+    }
+
+    @AfterClass
+    public static void cleanUp() {
+        try {
+            Files.deleteIfExists(Paths.get(validDirectory));
+        } catch (Exception ignored){}
+    }
+
+    private static class DummyJournalIdFilter implements JournalIdFilter {
+        @Override
+        public boolean accept(long journalId) {
+            return false;
+        }
+    }
+}
