@@ -29,6 +29,7 @@
   <name>Apache BookKeeper :: Parent</name>
   <url>http://bookkeeeper.apache.org</url>
   <inceptionYear>2011</inceptionYear>
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -36,20 +37,24 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <scm>
     <connection>scm:git:https://github.com/apache/bookkeeper.git</connection>
     <developerConnection>scm:git:https://github.com/apache/bookkeeper.git</developerConnection>
     <url>https://github.com/apache/bookkeeper</url>
     <tag>branch-4.13</tag>
   </scm>
+
   <issueManagement>
     <system>JIRA</system>
     <url>https://issues.apache.org/jira/browse/BOOKKEEPER</url>
   </issueManagement>
+
   <ciManagement>
     <system>Jenkins</system>
     <url>https://builds.apache.org/job/bookkeeper-master</url>
   </ciManagement>
+
   <modules>
     <module>buildtools</module>
     <module>circe-checksum</module>
@@ -71,7 +76,12 @@
     <module>tests</module>
     <module>native-io</module>
     <module>testtools</module>
+
+    <!-- added to perform JaCoCo coverage -->
+    <module>test-jacoco</module>
+
   </modules>
+
   <mailingLists>
     <mailingList>
       <name>BookKeeper User</name>
@@ -95,6 +105,7 @@
       <archive>http://www.mail-archive.com/commits@bookkeeper.apache.org</archive>
     </mailingList>
   </mailingLists>
+
   <developers>
     <developer>
       <name>The Apache BookKeeper Team</name>
@@ -104,6 +115,7 @@
       <organizationUrl>http://www.apache.org</organizationUrl>
     </developer>
   </developers>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -112,6 +124,9 @@
     <testRetryCount>2</testRetryCount>
     <src.dir>src/main/java</src.dir>
     <test.additional.args />
+
+    <!-- JaCoCo additions -->
+    <sonar.coverage.jacoco.xmlReportPaths>${../tests/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
     <!-- dependencies -->
     <arquillian-cube.version>1.18.2</arquillian-cube.version>
@@ -186,6 +201,7 @@
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
     <gmavenplus-plugin.version>1.13.1</gmavenplus-plugin.version>
     <license-maven-plugin.version>1.6</license-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.0</jacoco-maven-plugin.version>
     <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
@@ -902,6 +918,23 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>3.9.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.6</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
     <plugins>
@@ -1099,7 +1132,32 @@
       </plugin>
     </plugins>
   </build>
+
   <profiles>
+
+    <profile>
+      <id>coverage</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>owasp-dependency-check</id>
       <build>
@@ -1306,4 +1364,5 @@
       </build>
     </profile>
   </profiles>
+
 </project>
