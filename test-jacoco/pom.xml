@@ -42,6 +42,11 @@
                         <phase>verify</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/apache/bookkeeper/bookie/EntryLogManagerForSingleEntryLog$1.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
