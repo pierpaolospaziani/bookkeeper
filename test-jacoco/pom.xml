@@ -12,13 +12,13 @@
 
     <groupId>org.apache.bookkeeper.test-jacoco</groupId>
     <artifactId>test-jacoco</artifactId>
-    <name>Test JaCoCo :: Aggregate Coverage Report</name>
+    <name>Apache BookKeeper :: Test JaCoCo :: Aggregate Coverage Report</name>
 
-    <properties>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+<!--    <properties>-->
+<!--        <maven.compiler.source>20</maven.compiler.source>-->
+<!--        <maven.compiler.target>20</maven.compiler.target>-->
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--    </properties>-->
 
     <dependencies>
         <dependency>

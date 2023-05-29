@@ -9,12 +9,16 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class JournalListTest {
@@ -49,7 +53,10 @@ public class JournalListTest {
                 this.filter = id -> id % 2 == 0;
                 break;
             case INVALID:
-                this.filter = new DummyJournalIdFilter();
+                JournalIdFilter mockFilter = mock(JournalIdFilter.class);
+                when(mockFilter.accept(anyLong())).thenReturn(false);
+                this.filter = mockFilter;
+//                this.filter = new DummyJournalIdFilter();
                 break;
         }
         this.expectedException = expectedException;
@@ -59,8 +66,8 @@ public class JournalListTest {
     public static void setup() throws IOException {
         File journalDir = new File(validDirectory);
         journalDir.mkdir();
-        File journalEmptyDir = new File(invalidDirectory);
-        journalEmptyDir.mkdir();
+//        File journalEmptyDir = new File(invalidDirectory);
+//        journalEmptyDir.mkdir();
 
         // Creazione di alcuni file journal di esempio
         new File(journalDir + "/2.txn").createNewFile();
@@ -124,7 +131,19 @@ public class JournalListTest {
     @AfterClass
     public static void cleanUp() {
         try {
-            Files.deleteIfExists(Paths.get(validDirectory));
+            Files.walkFileTree(Paths.get(validDirectory), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         } catch (Exception ignored){}
     }
 

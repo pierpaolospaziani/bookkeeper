@@ -49,7 +49,6 @@ public class ReadCachePutTest {
                 ByteBuf invalidEntry = allocator.buffer(4*entrySize);
                 invalidEntry.writerIndex(invalidEntry.capacity());
                 this.entry = invalidEntry;
-//                this.entry = allocator.buffer();
                 break;
         }
     }
