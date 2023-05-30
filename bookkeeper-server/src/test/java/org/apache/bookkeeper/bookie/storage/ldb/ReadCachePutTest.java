@@ -103,6 +103,8 @@ public class ReadCachePutTest {
 
                 if (entry.capacity() == entrySize){
                     assertEquals(1,cache.count());
+                    cache.put(ledgerId, entryId, entry);
+                    assertEquals(2,cache.count());
                 }
             });
         } else {

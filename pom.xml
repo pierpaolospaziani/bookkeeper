@@ -1334,10 +1334,13 @@
     <profile>
       <id>coverage</id>
       <activation>
-        <property>
-          <name>!skipcoverage</name>
-        </property>
+        <activeByDefault>false</activeByDefault>
       </activation>
+<!--      <activation>-->
+<!--        <property>-->
+<!--          <name>!skipcoverage</name>-->
+<!--        </property>-->
+<!--      </activation>-->
       <build>
         <plugins>
           <plugin>
