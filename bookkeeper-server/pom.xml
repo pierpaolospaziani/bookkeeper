@@ -25,6 +25,11 @@
   <artifactId>bookkeeper-server</artifactId>
   <name>Apache BookKeeper :: Server</name>
 
+  <properties>
+    <ba-dua.groupId>br.usp.each.saeg</ba-dua.groupId>
+    <ba-dua.version>0.8.0</ba-dua.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.bookkeeper</groupId>
@@ -235,12 +240,12 @@
           <version>1.6.1</version>
           <scope>test</scope>
       </dependency>
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-engine</artifactId>
-      <version>1.6.1</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.junit.platform</groupId>-->
+<!--      <artifactId>junit-platform-engine</artifactId>-->
+<!--      <version>1.6.1</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
@@ -436,6 +441,6 @@
         </plugins>
       </build>
     </profile>
-  </profiles>
 
+  </profiles>
 </project>

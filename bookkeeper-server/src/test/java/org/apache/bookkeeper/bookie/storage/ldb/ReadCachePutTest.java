@@ -2,6 +2,7 @@ package org.apache.bookkeeper.bookie.storage.ldb;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -20,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 public class ReadCachePutTest {
     private static final ByteBufAllocator allocator = UnpooledByteBufAllocator.DEFAULT;
     private static final int entrySize = 1024;
-    private static final int cacheCapability = 2 * entrySize;
+    private static final int cacheCapability = 4 * entrySize;
 
     private static ReadCache cache;
 
@@ -46,7 +48,7 @@ public class ReadCachePutTest {
                 this.entry = validEntry;
                 break;
             case INVALID:
-                ByteBuf invalidEntry = allocator.buffer(4*entrySize);
+                ByteBuf invalidEntry = allocator.buffer(5*entrySize);
                 invalidEntry.writerIndex(invalidEntry.capacity());
                 this.entry = invalidEntry;
                 break;
@@ -55,7 +57,7 @@ public class ReadCachePutTest {
 
     @Before
     public  void configure() {
-        cache = new ReadCache(allocator, cacheCapability);
+        cache = new ReadCache(allocator, cacheCapability, 2*1024);
     }
 
     @Parameters
@@ -96,14 +98,13 @@ public class ReadCachePutTest {
         if (expectedException == null) {
             Assertions.assertDoesNotThrow(() -> {
                 // Codice di test che non dovrebbe sollevare un'eccezione
-
                 assertEquals(0, cache.count());
-
                 cache.put(ledgerId, entryId, entry);
-
                 if (entry.capacity() == entrySize){
                     assertEquals(1,cache.count());
-                    cache.put(ledgerId, entryId, entry);
+                    ByteBuf validEntry = allocator.buffer(entrySize+1);
+                    validEntry.writerIndex(validEntry.capacity());
+                    cache.put(ledgerId+1, entryId, validEntry);
                     assertEquals(2,cache.count());
                 }
             });

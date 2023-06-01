@@ -23,13 +23,14 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class JournalListTest {
     private static final String validDirectory = "/tmp/journal";
+    private static final String emptyDirectory = "/tmp/empty";
     private static final String invalidDirectory = "/...";
     private File journalDir;
     private JournalIdFilter filter;
     private final Class<? extends Exception> expectedException;
     private static final List<Long> expected = new ArrayList<>();
     private enum ObjType {
-        NULL, VALID, INVALID
+        NULL, VALID, INVALID, EMPTY
     }
 
     public JournalListTest(ObjType journalDirType, ObjType filterType, Class<? extends Exception> expectedException) {
@@ -42,6 +43,9 @@ public class JournalListTest {
                 break;
             case INVALID:
                 this.journalDir = new File(invalidDirectory);
+                break;
+            case EMPTY:
+                this.journalDir = new File(emptyDirectory);
                 break;
         }
         switch(filterType) {
@@ -56,7 +60,6 @@ public class JournalListTest {
                 JournalIdFilter mockFilter = mock(JournalIdFilter.class);
                 when(mockFilter.accept(anyLong())).thenReturn(false);
                 this.filter = mockFilter;
-//                this.filter = new DummyJournalIdFilter();
                 break;
         }
         this.expectedException = expectedException;
@@ -66,8 +69,8 @@ public class JournalListTest {
     public static void setup() throws IOException {
         File journalDir = new File(validDirectory);
         journalDir.mkdir();
-//        File journalEmptyDir = new File(invalidDirectory);
-//        journalEmptyDir.mkdir();
+        File emptyDir = new File(emptyDirectory);
+        emptyDir.mkdir();
 
         // Creazione di alcuni file journal di esempio
         new File(journalDir + "/2.txn").createNewFile();
@@ -99,7 +102,10 @@ public class JournalListTest {
                 { ObjType.VALID,     ObjType.INVALID,   null                       },  // 5
                 { ObjType.INVALID,   ObjType.NULL,      null                       },  // 6
                 { ObjType.INVALID,   ObjType.VALID,     null                       },  // 7
-                { ObjType.INVALID,   ObjType.INVALID,   null                       }   // 8
+                { ObjType.INVALID,   ObjType.INVALID,   null                       },  // 8
+                { ObjType.EMPTY,     ObjType.NULL,      null                       },  // 9
+                { ObjType.EMPTY,     ObjType.VALID,     null                       },  // 10
+                { ObjType.EMPTY,     ObjType.INVALID,   null                       }   // 11
         });
     }
 
@@ -131,6 +137,7 @@ public class JournalListTest {
     @AfterClass
     public static void cleanUp() {
         try {
+            Files.delete(Paths.get(emptyDirectory));
             Files.walkFileTree(Paths.get(validDirectory), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -145,12 +152,5 @@ public class JournalListTest {
                 }
             });
         } catch (Exception ignored){}
-    }
-
-    private static class DummyJournalIdFilter implements JournalIdFilter {
-        @Override
-        public boolean accept(long journalId) {
-            return false;
-        }
     }
 }

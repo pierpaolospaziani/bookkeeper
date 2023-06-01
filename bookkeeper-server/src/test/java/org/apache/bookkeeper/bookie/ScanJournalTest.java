@@ -23,22 +23,37 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class ScanJournalTest {
     private static final String validDirectory = "/tmp/journal";
-    private static final String invalidDirectory = "/...";
     private final Journal journal;
-    private final long journalId;
+    private long journalId;
     private final long journalPos;
     private JournalScanner scanner;
     private final Class<? extends Exception> expectedException;
+    private enum idType {
+        NEGATIVEONE, ZERO, ONE, VALID
+    }
     private enum ObjType {
         NULL, VALID, INVALID
     }
 
     static final List<File> tempDirs = new ArrayList<>();
 
-    public ScanJournalTest(long journalId, long journalPos, ObjType scannerType, Class<? extends Exception> expectedException) throws Exception {
+    public ScanJournalTest(idType journalIdType, long journalPos, ObjType scannerType, Class<? extends Exception> expectedException) throws Exception {
         this.journal = generateJournal();
-        this.journalId = journalId;
         this.journalPos = journalPos;
+        switch(journalIdType) {
+            case NEGATIVEONE:
+                this.journalId = -1;
+                break;
+            case ZERO:
+                this.journalId = 0;
+                break;
+            case ONE:
+                this.journalId = 1;
+                break;
+            case VALID:
+                this.journalId = Journal.listJournalIds(this.journal.getJournalDirectory(), null).get(0);
+                break;
+        }
         switch(scannerType) {
             case NULL:
                 this.scanner = null;
@@ -78,47 +93,52 @@ public class ScanJournalTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { -1,    -1,    ObjType.NULL,       null },  // 0
-                { -1,    -1,    ObjType.VALID,      null },  // 1
-                { -1,    -1,    ObjType.INVALID,    null },  // 2
-                { -1,     0,    ObjType.NULL,       null },  // 3
-                { -1,     0,    ObjType.VALID,      null },  // 4
-                { -1,     0,    ObjType.INVALID,    null },  // 5
-                { -1,     1,    ObjType.NULL,       null },  // 6
-                { -1,     1,    ObjType.VALID,      null },  // 7
-                { -1,     1,    ObjType.INVALID,    null },  // 8
-                {  0,    -1,    ObjType.NULL,       null },  // 9
-                {  0,    -1,    ObjType.VALID,      null },  // 10
-                {  0,    -1,    ObjType.INVALID,    null },  // 11
-                {  0,     0,    ObjType.NULL,       null },  // 12
-                {  0,     0,    ObjType.VALID,      null },  // 13
-                {  0,     0,    ObjType.INVALID,    null },  // 14
-                {  0,     1,    ObjType.NULL,       null },  // 15
-                {  0,     1,    ObjType.VALID,      null },  // 16
-                {  0,     1,    ObjType.INVALID,    null },  // 17
-                {  1,    -1,    ObjType.NULL,       null },  // 18
-                {  1,    -1,    ObjType.VALID,      null },  // 19
-                {  1,    -1,    ObjType.INVALID,    null },  // 20
-                {  1,     0,    ObjType.NULL,       null },  // 21
-                {  1,     0,    ObjType.VALID,      null },  // 22
-                {  1,     0,    ObjType.INVALID,    null },  // 23
-                {  1,     1,    ObjType.NULL,       null },  // 24
-                {  1,     1,    ObjType.VALID,      null },  // 25
-                {  1,     1,    ObjType.INVALID,    null }   // 26
+                {  idType.NEGATIVEONE,   -1,    ObjType.NULL,       null                       },  // 0
+                {  idType.NEGATIVEONE,   -1,    ObjType.VALID,      null                       },  // 1
+                {  idType.NEGATIVEONE,   -1,    ObjType.INVALID,    null                       },  // 2
+                {  idType.NEGATIVEONE,    0,    ObjType.NULL,       null                       },  // 3
+                {  idType.NEGATIVEONE,    0,    ObjType.VALID,      null                       },  // 4
+                {  idType.NEGATIVEONE,    0,    ObjType.INVALID,    null                       },  // 5
+                {  idType.NEGATIVEONE,    1,    ObjType.NULL,       null                       },  // 6
+                {  idType.NEGATIVEONE,    1,    ObjType.VALID,      null                       },  // 7
+                {  idType.NEGATIVEONE,    1,    ObjType.INVALID,    null                       },  // 8
+                {  idType.ZERO,          -1,    ObjType.NULL,       null                       },  // 9
+                {  idType.ZERO,          -1,    ObjType.VALID,      null                       },  // 10
+                {  idType.ZERO,          -1,    ObjType.INVALID,    null                       },  // 11
+                {  idType.ZERO,           0,    ObjType.NULL,       null                       },  // 12
+                {  idType.ZERO,           0,    ObjType.VALID,      null                       },  // 13
+                {  idType.ZERO,           0,    ObjType.INVALID,    null                       },  // 14
+                {  idType.ZERO,           1,    ObjType.NULL,       null                       },  // 15
+                {  idType.ZERO,           1,    ObjType.VALID,      null                       },  // 16
+                {  idType.ZERO,           1,    ObjType.INVALID,    null                       },  // 17
+                {  idType.ONE,           -1,    ObjType.NULL,       null                       },  // 18
+                {  idType.ONE,           -1,    ObjType.VALID,      null                       },  // 19
+                {  idType.ONE,           -1,    ObjType.INVALID,    null                       },  // 20
+                {  idType.ONE,            0,    ObjType.NULL,       null                       },  // 21
+                {  idType.ONE,            0,    ObjType.VALID,      null                       },  // 22
+                {  idType.ONE,            0,    ObjType.INVALID,    null                       },  // 23
+                {  idType.ONE,            1,    ObjType.NULL,       null                       },  // 24
+                {  idType.ONE,            1,    ObjType.VALID,      null                       },  // 25
+                {  idType.ONE,            1,    ObjType.INVALID,    null                       },  // 26
+                {  idType.VALID,         -1,    ObjType.NULL,       NullPointerException.class },  // 27
+                {  idType.VALID,         -1,    ObjType.VALID,      null                       },  // 28
+                {  idType.VALID,         -1,    ObjType.INVALID,    RuntimeException.class     },  // 29
+                {  idType.VALID,          0,    ObjType.NULL,       NullPointerException.class },  // 30
+                {  idType.VALID,          0,    ObjType.VALID,      null                       },  // 31
+                {  idType.VALID,          0,    ObjType.INVALID,    RuntimeException.class     },  // 32
+                {  idType.VALID,          1,    ObjType.NULL,       null                       },  // 33
+                {  idType.VALID,          1,    ObjType.VALID,      null                       },  // 34
+                {  idType.VALID,          1,    ObjType.INVALID,    null                       },  // 35
         });
     }
 
     @Test
-    public void testListJournalIds() {
-
-//        long generatedJournalId = Journal.listJournalIds(this.journal.getJournalDirectory(), null).get(0);
-//        long generatedOutput = this.journal.scanJournal(generatedJournalId, this.journalPos, this.scanner);
-
+    public void testScanJournal() {
         if (expectedException == null) {
             Assertions.assertDoesNotThrow(() -> {
                 long requestedOutput = this.journal.scanJournal(this.journalId, this.journalPos, this.scanner);
-                long validOutput = this.journal.scanJournal(Journal.listJournalIds(new File(validDirectory), null).get(0), this.journalPos, this.scanner);
-                Assertions.assertTrue(requestedOutput >= validOutput);
+                long dummyOutput = this.journal.scanJournal(Journal.listJournalIds(new File(validDirectory), null).get(0), this.journalPos, this.scanner);
+                Assertions.assertTrue(requestedOutput >= dummyOutput);
             });
         } else {
             Assertions.assertThrows(expectedException, () -> {
