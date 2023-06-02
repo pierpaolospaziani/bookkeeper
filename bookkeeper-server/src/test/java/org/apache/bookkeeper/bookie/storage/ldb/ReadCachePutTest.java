@@ -2,7 +2,6 @@ package org.apache.bookkeeper.bookie.storage.ldb;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import org.junit.After;
 import org.junit.Before;
@@ -12,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -57,7 +55,7 @@ public class ReadCachePutTest {
 
     @Before
     public  void configure() {
-        cache = new ReadCache(allocator, cacheCapability, 2*1024);
+        cache = new ReadCache(allocator, cacheCapability, 2*entrySize);
     }
 
     @Parameters
@@ -113,6 +111,24 @@ public class ReadCachePutTest {
                 // Codice di test che dovrebbe sollevare un'eccezione
                 cache.put(ledgerId, entryId, entry);
                 Assertions.fail();
+            });
+        }
+    }
+
+    /** test aggiunto per migliorare la mutation coverage */
+    @Test
+    public void improvementForMutation() {
+        if (ledgerId == -1 && entryId == -1 && expectedException == null){
+            Assertions.assertDoesNotThrow(() -> {
+                assertEquals(0, cache.count());
+                ByteBuf mutationEntry1 = allocator.buffer(2*entrySize);
+                mutationEntry1.writerIndex(mutationEntry1.capacity());
+                cache.put(1, 1, mutationEntry1);
+                assertEquals(1, cache.count());
+                ByteBuf mutationEntry2 = allocator.buffer(2*entrySize);
+                mutationEntry2.writerIndex(mutationEntry2.capacity());
+                cache.put(2, 1, mutationEntry2);
+                assertEquals(2, cache.count());
             });
         }
     }

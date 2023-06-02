@@ -128,7 +128,7 @@ public class ScanJournalTest {
                 {  idType.VALID,          0,    ObjType.INVALID,    RuntimeException.class     },  // 32
                 {  idType.VALID,          1,    ObjType.NULL,       null                       },  // 33
                 {  idType.VALID,          1,    ObjType.VALID,      null                       },  // 34
-                {  idType.VALID,          1,    ObjType.INVALID,    null                       },  // 35
+                {  idType.VALID,          1,    ObjType.INVALID,    null                       }   // 35
         });
     }
 
