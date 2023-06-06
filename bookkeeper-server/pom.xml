@@ -205,12 +205,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-    <dependency>
-       <!-- needed by ZooKeeper server tests utilities -->
-       <groupId>org.junit.jupiter</groupId>
-       <artifactId>junit-jupiter-api</artifactId>
-       <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--       &lt;!&ndash; needed by ZooKeeper server tests utilities &ndash;&gt;-->
+<!--       <groupId>org.junit.jupiter</groupId>-->
+<!--       <artifactId>junit-jupiter-api</artifactId>-->
+<!--       <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.apache.bookkeeper.stats</groupId>
       <artifactId>prometheus-metrics-provider</artifactId>
@@ -228,23 +228,29 @@
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>ch.qos.reload4j</groupId>
-          <artifactId>reload4j</artifactId>
-          <version>1.2.22</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.junit.platform</groupId>
-          <artifactId>junit-platform-engine</artifactId>
-          <version>1.6.1</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <scope>test</scope>
-      </dependency>
+<!--      <dependency>-->
+<!--          <groupId>ch.qos.reload4j</groupId>-->
+<!--          <artifactId>reload4j</artifactId>-->
+<!--          <version>1.2.22</version>-->
+<!--          <scope>test</scope>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--          <groupId>org.junit.platform</groupId>-->
+<!--          <artifactId>junit-platform-engine</artifactId>-->
+<!--          <version>1.6.1</version>-->
+<!--          <scope>test</scope>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--          <groupId>junit</groupId>-->
+<!--          <artifactId>junit</artifactId>-->
+<!--          <scope>test</scope>-->
+<!--      </dependency>-->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.6.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -447,94 +453,94 @@
             </executions>
           </plugin>
 
-<!--          <plugin>-->
-<!--            <groupId>org.apache.maven.plugins</groupId>-->
-<!--            <artifactId>maven-install-plugin</artifactId>-->
-<!--            <version>3.1.0</version>-->
-<!--            <executions>-->
-<!--              <execution>-->
-<!--                <id>install-ba-dua-cli</id>-->
-<!--                <phase>initialize</phase>-->
-<!--                <goals>-->
-<!--                  <goal>install-file</goal>-->
-<!--                </goals>-->
-<!--                <configuration>-->
-<!--                  <groupId>${ba-dua.groupId}</groupId>-->
-<!--                  <artifactId>ba-dua-cli</artifactId>-->
-<!--                  <version>${ba-dua.version}</version>-->
-<!--                  <classifier>all</classifier>-->
-<!--                  <packaging>jar</packaging>-->
-<!--                  <file>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</file>-->
-<!--                </configuration>-->
-<!--              </execution>-->
-<!--            </executions>-->
-<!--          </plugin>-->
-<!--          <plugin>-->
-<!--            <groupId>org.apache.maven.plugins</groupId>-->
-<!--            <artifactId>maven-dependency-plugin</artifactId>-->
-<!--            <version>2.10</version>-->
-<!--            <executions>-->
-<!--              <execution>-->
-<!--                <id>copy-ba-dua-cli</id>-->
-<!--                <goals>-->
-<!--                  <goal>copy</goal>-->
-<!--                </goals>-->
-<!--                <configuration>-->
-<!--                  <artifactItems>-->
-<!--                    <artifactItem>-->
-<!--                      <groupId>${ba-dua.groupId}</groupId>-->
-<!--                      <artifactId>ba-dua-cli</artifactId>-->
-<!--                      <classifier>all</classifier>-->
-<!--                      <version>${ba-dua.version}</version>-->
-<!--                    </artifactItem>-->
-<!--                  </artifactItems>-->
-<!--                </configuration>-->
-<!--              </execution>-->
-<!--            </executions>-->
-<!--          </plugin>-->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>install-ba-dua-cli</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <groupId>${ba-dua.groupId}</groupId>
+                  <artifactId>ba-dua-cli</artifactId>
+                  <version>${ba-dua.version}</version>
+                  <classifier>all</classifier>
+                  <packaging>jar</packaging>
+                  <file>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</file>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-ba-dua-cli</id>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${ba-dua.groupId}</groupId>
+                      <artifactId>ba-dua-cli</artifactId>
+                      <classifier>all</classifier>
+                      <version>${ba-dua.version}</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
           <!-- serve per l'output di ba-dua in xml -->
-<!--          <plugin>-->
-<!--            <groupId>org.codehaus.mojo</groupId>-->
-<!--            <artifactId>exec-maven-plugin</artifactId>-->
-<!--            <version>1.5.0</version>-->
-<!--            <dependencies>-->
-<!--              <dependency>-->
-<!--                <groupId>${ba-dua.groupId}</groupId>-->
-<!--                <artifactId>ba-dua-cli</artifactId>-->
-<!--                <version>${ba-dua.version}</version>-->
-<!--                <type>jar</type>-->
-<!--                <scope>system</scope>-->
-<!--                <systemPath>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</systemPath>-->
-<!--              </dependency>-->
-<!--            </dependencies>-->
-<!--            <executions>-->
-<!--              <execution>-->
-<!--                <goals>-->
-<!--                  <goal>java</goal>-->
-<!--                </goals>-->
-<!--                <phase>verify</phase>-->
-<!--                <configuration>-->
-<!--                  <includePluginDependencies>true</includePluginDependencies>-->
-<!--                  <executableDependency>-->
-<!--                    <groupId>${ba-dua.groupId}</groupId>-->
-<!--                    <artifactId>ba-dua-cli</artifactId>-->
-<!--                  </executableDependency>-->
-<!--                  <mainClass>br.usp.each.saeg.badua.cli.Report</mainClass>-->
-<!--                  <arguments>-->
-<!--                    <argument>-input</argument>-->
-<!--                    <argument>${project.build.directory}/badua.ser</argument>-->
-<!--                    <argument>-classes</argument>-->
-<!--                    <argument>${project.build.outputDirectory}</argument>-->
-<!--                    <argument>-show-classes</argument>-->
-<!--                    <argument>-show-methods</argument>-->
-<!--                    <argument>-xml</argument>-->
-<!--                    <argument>${project.build.directory}/badua.xml</argument>-->
-<!--                  </arguments>-->
-<!--                </configuration>-->
-<!--              </execution>-->
-<!--            </executions>-->
-<!--          </plugin>-->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <dependencies>
+              <dependency>
+                <groupId>${ba-dua.groupId}</groupId>
+                <artifactId>ba-dua-cli</artifactId>
+                <version>${ba-dua.version}</version>
+                <type>jar</type>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</systemPath>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <includePluginDependencies>true</includePluginDependencies>
+                  <executableDependency>
+                    <groupId>${ba-dua.groupId}</groupId>
+                    <artifactId>ba-dua-cli</artifactId>
+                  </executableDependency>
+                  <mainClass>br.usp.each.saeg.badua.cli.Report</mainClass>
+                  <arguments>
+                    <argument>-input</argument>
+                    <argument>${project.build.directory}/badua.ser</argument>
+                    <argument>-classes</argument>
+                    <argument>${project.build.outputDirectory}</argument>
+                    <argument>-show-classes</argument>
+                    <argument>-show-methods</argument>
+                    <argument>-xml</argument>
+                    <argument>${project.build.directory}/badua.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
         </plugins>
       </build>
