@@ -427,6 +427,21 @@
                   <file>${project.basedir}/../ba-dua/ba-dua-agent-rt-${ba-dua.version}-all.jar</file>
                 </configuration>
               </execution>
+              <execution>
+                <id>install-ba-dua-cli</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <groupId>${ba-dua.groupId}</groupId>
+                  <artifactId>ba-dua-cli</artifactId>
+                  <version>${ba-dua.version}</version>
+                  <classifier>all</classifier>
+                  <packaging>jar</packaging>
+                  <file>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</file>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
           <plugin>
@@ -450,36 +465,6 @@
                   </artifactItems>
                 </configuration>
               </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>3.1.0</version>
-            <executions>
-              <execution>
-                <id>install-ba-dua-cli</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-                <configuration>
-                  <groupId>${ba-dua.groupId}</groupId>
-                  <artifactId>ba-dua-cli</artifactId>
-                  <version>${ba-dua.version}</version>
-                  <classifier>all</classifier>
-                  <packaging>jar</packaging>
-                  <file>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</file>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.10</version>
-            <executions>
               <execution>
                 <id>copy-ba-dua-cli</id>
                 <goals>
