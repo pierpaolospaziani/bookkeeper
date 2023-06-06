@@ -3,8 +3,6 @@ name: Badua
 on:
   push:
     branches: badua
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
