@@ -2,7 +2,7 @@ name: Badua
 
 on:
   push:
-    branches: [ master ]
+    branches: badua
   pull_request:
     branches: [ master ]
 
