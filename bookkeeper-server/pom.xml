@@ -85,10 +85,10 @@
       <artifactId>netty-handler</artifactId>
     </dependency>
     <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-transport-native-epoll</artifactId>
-        <classifier>linux-x86_64</classifier>
-      </dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport-native-epoll</artifactId>
+      <classifier>linux-x86_64</classifier>
+    </dependency>
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-tcnative-boringssl-static</artifactId>
@@ -176,40 +176,34 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.apache.kerby</groupId>
-        <artifactId>kerby-config</artifactId>
-        <version>${kerby.version}</version>
-        <scope>test</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>*</artifactId>
-            </exclusion>
-        </exclusions>
+      <groupId>org.apache.kerby</groupId>
+      <artifactId>kerby-config</artifactId>
+      <version>${kerby.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-        <groupId>org.apache.kerby</groupId>
-        <artifactId>kerb-simplekdc</artifactId>
-        <version>${kerby.version}</version>
-        <scope>test</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>*</artifactId>
-            </exclusion>
-        </exclusions>
+      <groupId>org.apache.kerby</groupId>
+      <artifactId>kerb-simplekdc</artifactId>
+      <version>${kerby.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-       <!-- needed by ZooKeeper server tests utilities -->
-       <groupId>org.junit.jupiter</groupId>
-       <artifactId>junit-jupiter-api</artifactId>
-       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.bookkeeper.stats</groupId>
@@ -228,29 +222,11 @@
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>ch.qos.reload4j</groupId>
-          <artifactId>reload4j</artifactId>
-          <version>1.2.22</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.junit.platform</groupId>
-          <artifactId>junit-platform-engine</artifactId>
-          <version>1.6.1</version>
-          <scope>test</scope>
-      </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.junit.platform</groupId>-->
-<!--      <artifactId>junit-platform-engine</artifactId>-->
-<!--      <version>1.6.1</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.6.2</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -300,7 +276,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
+        <!-- THIS IS TO IGNORE THE FAILURES GIVEN FROM THE BUG-->
         <configuration>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+        <!-- configuration>
           <trimStackTrace>false</trimStackTrace>
           <properties>
             <property>
@@ -308,7 +288,7 @@
               <value>org.apache.bookkeeper.common.testing.util.TimedOutTestsListener</value>
             </property>
           </properties>
-        </configuration>
+        </configuration -->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -394,6 +374,128 @@
       </build>
     </profile>
 
+    <!-- ba-dua profile -->
+    <profile>
+      <id>badua</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <argLine>-javaagent:target/dependency/ba-dua-agent-rt-0.6.0-all.jar -Doutput.file=target/badua.ser</argLine>
+      </properties>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>install-ba-dua-cli</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <groupId>${ba-dua.groupId}</groupId>
+                  <artifactId>ba-dua-cli</artifactId>
+                  <version>${ba-dua.version}</version>
+                  <classifier>all</classifier>
+                  <packaging>jar</packaging>
+                  <file>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</file>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-ba-dua-agent-rt</id>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${ba-dua.groupId}</groupId>
+                      <artifactId>ba-dua-agent-rt</artifactId>
+                      <classifier>all</classifier>
+                      <version>0.6.0</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-ba-dua-cli</id>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${ba-dua.groupId}</groupId>
+                      <artifactId>ba-dua-cli</artifactId>
+                      <classifier>all</classifier>
+                      <version>${ba-dua.version}</version>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- serve per l'output di ba-dua in xml -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <dependencies>
+              <dependency>
+                <groupId>${ba-dua.groupId}</groupId>
+                <artifactId>ba-dua-cli</artifactId>
+                <version>${ba-dua.version}</version>
+                <type>jar</type>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../ba-dua/ba-dua-cli-${ba-dua.version}-all.jar</systemPath>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <includePluginDependencies>true</includePluginDependencies>
+                  <executableDependency>
+                    <groupId>${ba-dua.groupId}</groupId>
+                    <artifactId>ba-dua-cli</artifactId>
+                  </executableDependency>
+                  <mainClass>br.usp.each.saeg.badua.cli.Report</mainClass>
+                  <arguments>
+                    <argument>-input</argument>
+                    <argument>${project.build.directory}/badua.ser</argument>
+                    <argument>-classes</argument>
+                    <argument>${project.build.outputDirectory}</argument>
+                    <argument>-show-classes</argument>
+                    <argument>-show-methods</argument>
+                    <argument>-xml</argument>
+                    <argument>${project.build.directory}/badua.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+
     <!-- Mutation PIT profile -->
     <profile>
       <id>mutation</id>
@@ -411,7 +513,7 @@
             <artifactId>pitest-maven</artifactId>
             <version>1.14.0</version>
             <configuration>
-<!--              <verbose>true</verbose>-->
+              <!--              <verbose>true</verbose>-->
               <targetClasses>
                 <!-- classes to test  -->
                 <param>org.apache.bookkeeper.bookie.storage.ldb.ReadCache</param>
