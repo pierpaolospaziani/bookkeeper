@@ -27,7 +27,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Badua check
-        run: mvn -B clean verify -P badua -pl :bookkeeper-server
+        run: mvn -B clean verify -P badua
 
       - name: Add Badua report
         uses: actions/upload-artifact@v3
